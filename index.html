@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chúc Mừng Năm Mới 2026</title>
+
+<style>
+body {
+    margin: 0;
+    background: radial-gradient(circle, #020024, #090979, #000);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.container {
+    position: absolute;
+    width: 100%;
+    top: 35%;
+    text-align: center;
+    z-index: 10;
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+}
+
+#countdown {
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* CHỮ BAY */
+.flying {
+    position: absolute;
+    bottom: -40px;
+    animation: fly 6s linear forwards;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+}
+
+@keyframes fly {
+    to {
+        transform: translateY(-120vh);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NHẠC TẾT VIỆT NAM -->
+<audio id="music" loop>
+    <source src="tet.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="canvas"></canvas>
+
+<div class="container">
+    <h1 id="title">🎆 Đếm Ngược Đến Năm Mới 🎆</h1>
+    <div id="countdown"></div>
+</div>
+
+<script>
+/* CLICK ĐỂ PHÁT NHẠC (CHUẨN MOBILE) */
+document.body.addEventListener("click", () => {
+    document.getElementById("music").play();
+});
+
+/* ĐẾM NGƯỢC */
+const newYear = new Date("2026-01-01T00:00:00").getTime();
+const title = document.getElementById("title");
+const countdown = document.getElementById("countdown");
+
+setInterval(() => {
+    const now = Date.now();
+    const d = newYear - now;
+
+    if (d <= 0) {
+        title.innerHTML = "🎉 CHÚC MỪNG NĂM MỚI 2026 🎉";
+        countdown.innerHTML = "🧧 An Khang – Thịnh Vượng 🧧";
+        return;
+    }
+
+    const s = Math.floor(d / 1000) % 60;
+    const m = Math.floor(d / 60000) % 60;
+    const h = Math.floor(d / 3600000) % 24;
+    const day = Math.floor(d / 86400000);
+
+    countdown.innerHTML = `${day} ngày ${h} giờ ${m} phút ${s} giây`;
+}, 1000);
+
+/* CHỮ BAY */
+const wishes = ["Chúc Mừng Năm Mới", "Phát Tài Phát Lộc", "An Khang Thịnh Vượng"];
+setInterval(() => {
+    const d = document.createElement("div");
+    d.className = "flying";
+    d.innerText = wishes[Math.floor(Math.random()*wishes.length)];
+    d.style.left = Math.random()*80+"%";
+    d.style.color = `hsl(${Math.random()*360},100%,70%)`;
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(),6000);
+},1200);
+
+/* PHÁO HOA CHỮ 2026 */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+let particles = [];
+
+function textFirework() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.font = "bold 180px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("2026", canvas.width/2, canvas.height/2);
+
+    const data = ctx.getImageData(0,0,canvas.width,canvas.height).data;
+    particles = [];
+
+    for(let y=0;y<canvas.height;y+=6){
+        for(let x=0;x<canvas.width;x+=6){
+            if(data[(y*canvas.width+x)*4+3]>150){
+                particles.push({
+                    x, y,
+                    dx:(Math.random()-0.5)*6,
+                    dy:(Math.random()-0.5)*6,
+                    life:100
+                });
+            }
+        }
+    }
+}
+textFirework();
+
+function animate(){
+    ctx.fillStyle="rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach(p=>{
+        p.x+=p.dx;
+        p.y+=p.dy;
+        p.life--;
+        ctx.fillStyle="gold";
+        ctx.fillRect(p.x,p.y,2,2);
+    });
+
+    requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
